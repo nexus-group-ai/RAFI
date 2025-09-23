@@ -11,7 +11,7 @@
         :root {
             --primary: #523b88;
             --primary-light: #7c5fa8;
-            --primary-dark: #3d2b66;
+            --primary-dark: #341c6d;
             --secondary: #e1bee7;
             --accent: #d500f9;
             --text-on-primary: #ffffff;
@@ -59,7 +59,7 @@
         }
 
         .tool-section-header {
-            background-color: var(--primary);
+            background-color: var(--primary-dark);
             color: var(--text-on-primary);
             padding: 20px;
             font-weight: 600;
@@ -272,8 +272,9 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-trophy me-2"></i>RAFI
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="Nexus_IRIS.png" alt="Nexus Logo" style="height: 40px; margin-right: 10px;">
+                RAFI
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -295,7 +296,6 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="p-4 bg-white rounded-3 shadow-sm text-center">
-                    <img src="logo_full.png" alt="Nexus Logo" class="logo">
                     <h1 class="display-6 text-primary mb-3">🎉 RAFI - Randomised Automated Fairness Initiative 🎉</h1>
                     <p class="lead">Upload a CSV or Excel file to select a winner fairly and randomly!</p>
                 </div>
