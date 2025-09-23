@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAFI - Randomised Automated Fairness Initiative</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #523b88;
+            --primary-light: #7c5fa8;
+            --primary-dark: #3d2b66;
+            --secondary: #e1bee7;
+            --accent: #d500f9;
+            --text-on-primary: #ffffff;
+            --bg-light: #f5f0f9;
+            --success: #28A745;
+            --warning: #FF5733;
+        }
+
+        body {
+            background-color: var(--primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .text-primary {
+            color: var(--primary) !important;
+        }
+
+        .navbar {
+            background-color: var(--primary-dark);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text-on-primary) !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--text-on-primary) !important;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--secondary) !important;
+        }
+
+        .tool-section {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .tool-section-header {
+            background-color: var(--primary);
+            color: var(--text-on-primary);
+            padding: 20px;
+            font-weight: 600;
+        }
+
+        .tool-section-content {
+            padding: 30px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            border-radius: 12px;
+            font-size: 18px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(82, 59, 136, 0.3);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            border-color: var(--success);
+            border-radius: 12px;
+            font-size: 18px;
+            padding: 12px 24px;
+            font-weight: 600;
+        }
+
+        .file-upload-area {
+            border: 3px dashed var(--primary);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            background-color: #f8f5ff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary-dark);
+            background-color: #f0ebff;
+        }
+
+        .file-upload-area.dragover {
+            border-color: var(--success);
+            background-color: #e8f5e8;
+        }
+
+        .winner-display {
+            text-align: center;
+            padding: 40px 20px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .winner-text {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .animation-text {
+            color: var(--warning);
+            animation: pulse 0.1s ease-in-out;
+        }
+
+        .final-winner {
+            color: var(--success);
+            animation: bounce 0.6s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                transform: translate3d(0,0,0);
+            }
+            40%, 43% {
+                transform: translate3d(0, -30px, 0);
+            }
+            70% {
+                transform: translate3d(0, -15px, 0);
+            }
+            90% {
+                transform: translate3d(0, -4px, 0);
+            }
+        }
+
+        .participants-table {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--secondary);
+            border-radius: 8px;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background-color: var(--primary);
+            color: var(--text-on-primary);
+            border: none;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            max-width: 120px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        footer {
+            background-color: var(--primary-dark);
+            color: var(--text-on-primary);
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+
+        .social-media a {
+            color: var(--text-on-primary);
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .social-media a:hover {
+            color: var(--secondary);
+            text-decoration: none;
+        }
+
+        .error-message {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .success-message {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .balloons {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .balloon {
+            position: absolute;
+            width: 20px;
+            height: 25px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .balloon:nth-child(1) { background: #ff6b6b; left: 10%; animation-delay: 0s; }
+        .balloon:nth-child(2) { background: #4ecdc4; left: 20%; animation-delay: 1s; }
+        .balloon:nth-child(3) { background: #45b7d1; left: 30%; animation-delay: 2s; }
+        .balloon:nth-child(4) { background: #96ceb4; left: 40%; animation-delay: 0.5s; }
+        .balloon:nth-child(5) { background: #ffeaa7; left: 50%; animation-delay: 1.5s; }
+        .balloon:nth-child(6) { background: #dda0dd; left: 60%; animation-delay: 3s; }
+        .balloon:nth-child(7) { background: #ff7675; left: 70%; animation-delay: 2.5s; }
+        .balloon:nth-child(8) { background: #74b9ff; left: 80%; animation-delay: 4s; }
+        .balloon:nth-child(9) { background: #a29bfe; left: 90%; animation-delay: 0.2s; }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-trophy me-2"></i>RAFI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#raffle-tool">Raffle Tool</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="p-4 bg-white rounded-3 shadow-sm text-center">
+                    <img src="logo_full.png" alt="Nexus Logo" class="logo">
+                    <h1 class="display-6 text-primary mb-3">🎉 RAFI - Randomised Automated Fairness Initiative 🎉</h1>
+                    <p class="lead">Upload a CSV or Excel file to select a winner fairly and randomly!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Main Raffle Tool -->
+                <div class="tool-section" id="raffle-tool">
+                    <div class="tool-section-header">
+                        <h2 class="m-0"><i class="fas fa-upload me-2"></i>File Upload & Winner Selection</h2>
+                    </div>
+                    <div class="tool-section-content">
+                        <!-- File Upload Area -->
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                            <h4>Upload Your File</h4>
+                            <p class="mb-3">Drag and drop your CSV or Excel file here, or click to browse</p>
+                            <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display: none;">
+                            <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                                <i class="fas fa-folder-open me-2"></i>Choose File
+                            </button>
+                        </div>
+
+                        <!-- File Info Display -->
+                        <div id="fileInfo" style="display: none;" class="mt-3">
+                            <div class="alert alert-info">
+                                <i class="fas fa-file me-2"></i>
+                                <span id="fileName"></span> - 
+                                <span id="fileSize"></span>
+                            </div>
+                        </div>
+
+                        <!-- Error Messages -->
+                        <div id="errorMessage" style="display: none;"></div>
+
+                        <!-- Success Messages -->
+                        <div id="successMessage" style="display: none;"></div>
+
+                        <!-- Participants Table -->
+                        <div id="participantsSection" style="display: none;" class="mt-4">
+                            <h4><i class="fas fa-users me-2"></i>Eligible Participants</h4>
+                            <div class="participants-table">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="participantsTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Winner Selection Button -->
+                            <div class="text-center mt-4">
+                                <button id="pickWinnerBtn" class="btn btn-success btn-lg">
+                                    <i class="fas fa-trophy me-2"></i>Pick a Winner!
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Winner Display Area -->
+                        <div id="winnerSection" style="display: none;" class="mt-4">
+                            <div class="tool-section">
+                                <div class="tool-section-header">
+                                    <h3 class="m-0"><i class="fas fa-star me-2"></i>Winner Announcement</h3>
+                                </div>
+                                <div class="winner-display">
+                                    <div id="winnerDisplay">
+                                        <p>🎉 Picking a winner... 🎉</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Instructions -->
+                <div class="tool-section">
+                    <div class="tool-section-header">
+                        <h3 class="m-0 h5"><i class="fas fa-info-circle me-2"></i>How to Use RAFI</h3>
+                    </div>
+                    <div class="tool-section-content">
+                        <ol>
+                            <li><strong>Upload File:</strong> Choose a CSV or Excel file containing participant data</li>
+                            <li><strong>Required Columns:</strong> Ensure your file has "First Name", "Last Name", and "Attendance" columns</li>
+                            <li><strong>Attendance Filter:</strong> Only participants with attendance = 1 will be eligible</li>
+                            <li><strong>Pick Winner:</strong> Click the "Pick a Winner!" button to start the selection</li>
+                            <li><strong>Celebrate:</strong> Watch the animation and see the winner!</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- File Format Guide -->
+                <div class="tool-section">
+                    <div class="tool-section-header">
+                        <h3 class="m-0 h5"><i class="fas fa-table me-2"></i>File Format Requirements</h3>
+                    </div>
+                    <div class="tool-section-content">
+                        <p><strong>Required Columns:</strong></p>
+                        <ul>
+                            <li><code>First Name</code> or <code>first name</code></li>
+                            <li><code>Last Name</code> or <code>last name</code></li>
+                            <li><code>Attendance</code> or <code>attendance</code></li>
+                        </ul>
+                        <p><strong>Attendance Values:</strong></p>
+                        <ul>
+                            <li><code>1</code> = Present (eligible for raffle)</li>
+                            <li><code>0</code> = Absent (not eligible)</li>
+                        </ul>
+                        <p><strong>Supported Formats:</strong> CSV (.csv), Excel (.xlsx, .xls)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Section -->
+        <div class="row mt-5" id="about">
+            <div class="col-12">
+                <div class="tool-section">
+                    <div class="tool-section-header">
+                        <h2 class="m-0"><i class="fas fa-info-circle me-2"></i>About RAFI</h2>
+                    </div>
+                    <div class="tool-section-content">
+                        <p><strong>RAFI</strong> (Randomised Automated Fairness Initiative) is a free tool designed to conduct fair and transparent raffles or winner selections from uploaded participant data.</p>
+                        <p>Perfect for events, competitions, giveaways, and any situation where you need to select winners randomly from a list of eligible participants.</p>
+                        <p>Developed by Nexus Group AI to ensure fairness and transparency in winner selection processes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Balloons Container -->
+    <div id="balloonsContainer" class="balloons" style="display: none;">
+        <div class="balloon"></div>
+        <div class="balloon"></div>
+        <div class="balloon"></div>
+        <div class="balloon"></div>
+        <div class="balloon"></div>
+        <div class="balloon"></div>
+        <div class="balloon"></div>
+        <div class="balloon"></div>
+        <div class="balloon"></div>
+    </div>
+
+    <footer class="text-center">
+        <div class="container">
+            <p>RAFI by Nexus Group AI</p>
+            <div class="social-media">
+                <a href="https://github.com/nexus-group-ai" target="_blank"><i class="fab fa-github me-1"></i>GitHub</a>
+                |
+                <a href="https://www.linkedin.com/company/101388118/" target="_blank"><i class="fab fa-linkedin me-1"></i>LinkedIn</a>
+            </div>
+            <p class="mt-2 mb-0 small">© 2025 Nexus Group AI. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        let participants = [];
+        let isAnimating = false;
+
+        // File upload functionality
+        const fileInput = document.getElementById('fileInput');
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const participantsSection = document.getElementById('participantsSection');
+        const participantsTableBody = document.getElementById('participantsTableBody');
+        const pickWinnerBtn = document.getElementById('pickWinnerBtn');
+        const winnerSection = document.getElementById('winnerSection');
+        const winnerDisplay = document.getElementById('winnerDisplay');
+        const balloonsContainer = document.getElementById('balloonsContainer');
+
+        // Drag and drop functionality
+        fileUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.add('dragover');
+        });
+
+        fileUploadArea.addEventListener('dragleave', () => {
+            fileUploadArea.classList.remove('dragover');
+        });
+
+        fileUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        fileUploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            // Reset UI
+            hideMessage();
+            participantsSection.style.display = 'none';
+            winnerSection.style.display = 'none';
+
+            // Validate file type
+            const validTypes = ['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+            const validExtensions = ['.csv', '.xlsx', '.xls'];
+            const isValidType = validTypes.includes(file.type) || validExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
+
+            if (!isValidType) {
+                showError('Please upload a CSV or Excel file (.csv, .xlsx, .xls)');
+                return;
+            }
+
+            // Show file info
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.style.display = 'block';
+
+            // Read and parse file
+            const reader = new FileReader();
+            
+            if (file.name.toLowerCase().endsWith('.csv')) {
+                reader.onload = (e) => parseCSV(e.target.result);
+                reader.readAsText(file);
+            } else {
+                reader.onload = (e) => parseExcel(e.target.result);
+                reader.readAsArrayBuffer(file);
+            }
+        }
+
+        function parseCSV(content) {
+            try {
+                const lines = content.split('\n');
+                const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/"/g, ''));
+                const data = [];
+
+                for (let i = 1; i < lines.length; i++) {
+                    if (lines[i].trim()) {
+                        const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+                        const row = {};
+                        headers.forEach((header, index) => {
+                            row[header] = values[index] || '';
+                        });
+                        data.push(row);
+                    }
+                }
+
+                processData(data);
+            } catch (error) {
+                showError('Error parsing CSV file: ' + error.message);
+            }
+        }
+
+        function parseExcel(content) {
+            try {
+                const workbook = XLSX.read(content, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                if (data.length < 2) {
+                    showError('Excel file must contain at least a header row and one data row.');
+                    return;
+                }
+
+                const headers = data[0].map(h => String(h).trim().toLowerCase());
+                const processedData = [];
+
+                for (let i = 1; i < data.length; i++) {
+                    if (data[i].some(cell => cell !== undefined && cell !== '')) {
+                        const row = {};
+                        headers.forEach((header, index) => {
+                            row[header] = data[i][index] ? String(data[i][index]).trim() : '';
+                        });
+                        processedData.push(row);
+                    }
+                }
+
+                processData(processedData);
+            } catch (error) {
+                showError('Error parsing Excel file: ' + error.message);
+            }
+        }
+
+        function processData(data) {
+            // Find required columns
+            const firstNameCol = findColumn(data[0], ['first name', 'firstname', 'first_name']);
+            const lastNameCol = findColumn(data[0], ['last name', 'lastname', 'last_name']);
+            const attendanceCol = findColumn(data[0], ['attendance']);
+
+            if (!firstNameCol || !lastNameCol || !attendanceCol) {
+                showError('Missing required columns. Please ensure your file has "First Name", "Last Name", and "Attendance" columns.');
+                return;
+            }
+
+            // Filter for attendees
+            participants = data.filter(row => {
+                const attendance = String(row[attendanceCol]).trim();
+                return attendance === '1' || attendance.toLowerCase() === 'true';
+            }).map(row => ({
+                firstName: row[firstNameCol],
+                lastName: row[lastNameCol],
+                fullName: `${row[firstNameCol]} ${row[lastNameCol]}`
+            }));
+
+            if (participants.length === 0) {
+                showError('No eligible participants found. Make sure there are participants with attendance = 1.');
+                return;
+            }
+
+            showSuccess(`File processed successfully! Found ${participants.length} eligible participant(s).`);
+            displayParticipants();
+        }
+
+        function findColumn(row, possibleNames) {
+            const keys = Object.keys(row);
+            return keys.find(key => possibleNames.includes(key.toLowerCase()));
+        }
+
+        function displayParticipants() {
+            participantsTableBody.innerHTML = '';
+            participants.forEach(participant => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${participant.firstName}</td>
+                    <td>${participant.lastName}</td>
+                `;
+                participantsTableBody.appendChild(row);
+            });
+            participantsSection.style.display = 'block';
+        }
+
+        function showError(message) {
+            errorMessage.innerHTML = `<div class="error-message"><i class="fas fa-exclamation-triangle me-2"></i>${message}</div>`;
+            errorMessage.style.display = 'block';
+            successMessage.style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            successMessage.innerHTML = `<div class="success-message"><i class="fas fa-check-circle me-2"></i>${message}</div>`;
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+        }
+
+        function hideMessage() {
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Winner selection functionality
+        pickWinnerBtn.addEventListener('click', () => {
+            if (isAnimating || participants.length === 0) return;
+            
+            isAnimating = true;
+            pickWinnerBtn.disabled = true;
+            winnerSection.style.display = 'block';
+            
+            // Play tada sound
+            playTadaSound();
+            
+            // Start animation
+            animateWinnerSelection();
+        });
+
+        function animateWinnerSelection() {
+            winnerDisplay.innerHTML = '<p style="font-size: 1.5rem;">🎉 Picking a winner... 🎉</p>';
+            
+            let count = 0;
+            const maxCount = 37; // Same as original Streamlit app
+            
+            const interval = setInterval(() => {
+                const randomParticipant = participants[Math.floor(Math.random() * participants.length)];
+                winnerDisplay.innerHTML = `<div class="winner-text animation-text">${randomParticipant.fullName}</div>`;
+                count++;
+                
+                if (count >= maxCount) {
+                    clearInterval(interval);
+                    // Final winner selection
+                    const winner = participants[Math.floor(Math.random() * participants.length)];
+                    winnerDisplay.innerHTML = `<div class="winner-text final-winner">🎉 ${winner.fullName} 🎉</div>`;
+                    
+                    // Show balloons
+                    showBalloons();
+                    
+                    // Reset state
+                    setTimeout(() => {
+                        isAnimating = false;
+                        pickWinnerBtn.disabled = false;
+                    }, 2000);
+                }
+            }, 100); // 100ms interval for animation
+        }
+
+        function showBalloons() {
+            balloonsContainer.style.display = 'block';
+            setTimeout(() => {
+                balloonsContainer.style.display = 'none';
+            }, 6000); // Hide after 6 seconds
+        }
+
+        function playTadaSound() {
+            // Create audio element and play tada sound
+            const audio = new Audio('tadaa.wav');
+            audio.volume = 0.5;
+            audio.play().catch(e => {
+                console.log('Could not play audio:', e);
+            });
+        }
+
+        // Initialize the application
+        window.onload = function() {
+            console.log('RAFI - Randomised Automated Fairness Initiative loaded successfully!');
+        };
+    </script>
+</body>
+
+</html>
