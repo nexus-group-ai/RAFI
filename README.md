@@ -10,7 +10,7 @@ Visit the live application: [https://nexus-group-ai.github.io/rafi/](https://nex
 
 - **File Upload**: Support for CSV and Excel (.xlsx, .xls) files
 - **Drag & Drop**: Easy file upload with drag and drop functionality
-- **Attendance Filtering**: Automatically filters participants based on attendance status
+- **Attendance Filtering (Optional)**: Automatically filters participants based on attendance status when included
 - **Animated Selection**: Exciting winner selection animation
 - **Responsive Design**: Works on desktop and mobile devices
 - **Sound Effects**: Celebration sound when picking a winner
@@ -22,17 +22,22 @@ Visit the live application: [https://nexus-group-ai.github.io/rafi/](https://nex
 2. **Required Columns**: Ensure your file has these columns:
    - `First Name` (or variations like `first name`, `firstname`)
    - `Last Name` (or variations like `last name`, `lastname`) 
-   - `Attendance` (with values: 1 = Present, 0 = Absent)
-3. **Review Participants**: Check the list of eligible participants
-4. **Pick Winner**: Click "Pick a Winner!" to start the animated selection
-5. **Celebrate**: Watch the animation and see the winner announcement!
+3. **Optional Columns**: 
+   - `Attendance` (with values: 1 = Present, 0 = Absent) - if included, filters participants
+4. **Review Participants**: Check the list of eligible participants
+5. **Pick Winner**: Click "Pick a Winner!" to start the animated selection
+6. **Celebrate**: Watch the animation and see the winner announcement!
 
 ## File Format Requirements
 
 ### Required Columns
 - **First Name**: First name of participant
 - **Last Name**: Last name of participant  
+
+### Optional Columns
 - **Attendance**: Numeric value (1 = eligible, 0 = not eligible)
+  - If attendance column is included, only participants with 1 are eligible
+  - If attendance column is not included, all participants are eligible
 
 ### Supported File Types
 - CSV files (.csv)

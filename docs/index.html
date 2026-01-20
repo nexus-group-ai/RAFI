@@ -386,8 +386,8 @@
                     <div class="tool-section-content">
                         <ol>
                             <li><strong>Upload File:</strong> Choose a CSV or Excel file containing participant data</li>
-                            <li><strong>Required Columns:</strong> Ensure your file has "First Name", "Last Name", and "Attendance" columns</li>
-                            <li><strong>Attendance Filter:</strong> Only participants with attendance = 1 will be eligible</li>
+                            <li><strong>Required Columns:</strong> Ensure your file has "First Name" and "Last Name" columns</li>
+                            <li><strong>Attendance Filter (Optional):</strong> If included, only participants with attendance = 1 will be eligible</li>
                             <li><strong>Pick Winner:</strong> Click the "Pick a Winner!" button to start the selection</li>
                             <li><strong>Celebrate:</strong> Watch the animation and see the winner!</li>
                         </ol>
@@ -404,12 +404,16 @@
                         <ul>
                             <li><code>First Name</code> or <code>first name</code></li>
                             <li><code>Last Name</code> or <code>last name</code></li>
+                        </ul>
+                        <p><strong>Optional Columns:</strong></p>
+                        <ul>
                             <li><code>Attendance</code> or <code>attendance</code></li>
                         </ul>
-                        <p><strong>Attendance Values:</strong></p>
+                        <p><strong>Attendance Values (if column included):</strong></p>
                         <ul>
                             <li><code>1</code> = Present (eligible for raffle)</li>
                             <li><code>0</code> = Absent (not eligible)</li>
+                            <li>If no attendance column, all participants are eligible</li>
                         </ul>
                         <p><strong>Supported Formats:</strong> CSV (.csv), Excel (.xlsx, .xls)</p>
                     </div>
@@ -602,23 +606,32 @@
             const lastNameCol = findColumn(data[0], ['last name', 'lastname', 'last_name']);
             const attendanceCol = findColumn(data[0], ['attendance']);
 
-            if (!firstNameCol || !lastNameCol || !attendanceCol) {
-                showError('Missing required columns. Please ensure your file has "First Name", "Last Name", and "Attendance" columns.');
+            if (!firstNameCol || !lastNameCol) {
+                showError('Missing required columns. Please ensure your file has "First Name" and "Last Name" columns.');
                 return;
             }
 
-            // Filter for attendees
-            participants = data.filter(row => {
-                const attendance = String(row[attendanceCol]).trim();
-                return attendance === '1' || attendance.toLowerCase() === 'true';
-            }).map(row => ({
-                firstName: row[firstNameCol],
-                lastName: row[lastNameCol],
-                fullName: `${row[firstNameCol]} ${row[lastNameCol]}`
-            }));
+            // Filter for attendees (or include all if no attendance column)
+            if (attendanceCol) {
+                participants = data.filter(row => {
+                    const attendance = String(row[attendanceCol]).trim();
+                    return attendance === '1' || attendance.toLowerCase() === 'true';
+                }).map(row => ({
+                    firstName: row[firstNameCol],
+                    lastName: row[lastNameCol],
+                    fullName: `${row[firstNameCol]} ${row[lastNameCol]}`
+                }));
+            } else {
+                // No attendance column - include all participants
+                participants = data.map(row => ({
+                    firstName: row[firstNameCol],
+                    lastName: row[lastNameCol],
+                    fullName: `${row[firstNameCol]} ${row[lastNameCol]}`
+                })).filter(p => p.firstName && p.lastName);
+            }
 
             if (participants.length === 0) {
-                showError('No eligible participants found. Make sure there are participants with attendance = 1.');
+                showError('No eligible participants found. Make sure your file has valid participant data.');
                 return;
             }
 
